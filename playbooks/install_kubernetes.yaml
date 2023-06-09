@@ -1,0 +1,61 @@
+---
+- name: Kubernetes Setup
+  hosts: host1
+  become: true
+  tasks:
+    - name: Kubernetes Abhängigkeiten installieren
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        update_cache: yes
+
+    - name: Kubernetes GPG Key hinzufügen
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Kubernetes Repo hinzufügen
+      apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+
+    - name: Kubernetes Pakete installieren
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: latest
+
+    - name: Kuberentes Cluster initialisieren
+      command: kubeadm init --config /path/to/kubeadm-config.yaml
+      register: kubeadm_output
+      changed_when: false
+
+    - name: Kubeconfig-Datei erstellen
+      command: "{{ item }}"
+      loop:
+        - mkdir -p $HOME/.kube
+        - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+        - sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+    - name: Kubelet und Kubectl konfigurieren
+      blockinfile:
+        block: |
+          KUBELET_EXTRA_ARGS=--fail-swap-on=false
+        dest: /etc/default/kubelet
+        insertafter: EOF
+
+    - name: Kubernetes-Netzwerk-Add-on installieren
+      command: kubectl apply -f https://docs.projectcalico.org/v3.18/manifests/calico.yaml
+      when: "'kubeadm init' in kubeadm_output.stdout"
+
+    - name: Kubeconfig-Datei an Master-Host kopieren
+      copy:
+        src: $HOME/.kube/config
+        dest: /path/to/remote/.kube/config
+        remote_src: true
+      when: "'kubeadm init' in kubeadm_output.stdout"
