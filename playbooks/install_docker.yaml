@@ -1,0 +1,39 @@
+---
+- name: Docker Setup
+  hosts: host1
+  become: true
+  tasks:
+    - name: Docker Abhängigkeiten installieren
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg-agent
+          - software-properties-common
+        update_cache: yes
+
+    - name: Docker GPG Key hinzufügen
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Docker Repo hinzufügen
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: sudo apt update
+      apt:
+        update_cache: yes
+
+    - name: Docker installieren
+      apt:
+        name: docker-ce
+        state: latest
+
+    - name: Benutzer zu Docker Group hinzufügen
+      user:
+        name: root
+        groups: docker
+        append: yes
