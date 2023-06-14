@@ -1,6 +1,6 @@
 ---
 - name: Docker Setup
-  hosts: host2
+  hosts: kubemaster, kubeworker
   become: true
   tasks:
     - name: Docker Abhängigkeiten installieren
