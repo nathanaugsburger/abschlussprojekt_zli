@@ -1,0 +1,32 @@
+---
+- name: Kubernetes Cluster konfigurieren
+  hosts: kubemaster
+  become: true
+  tasks:
+    - name: Kubernetes Master initialisieren
+      command: kubeadm init --pod-network-cidr=192.168.26.0/24
+
+    - name: Kubernetes auf dem Master konfigurieren
+      command: "{{ item }}"
+      loop:
+        - mkdir -p $HOME/.kube
+        - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+        - sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+    - name: Kubeconfig zum Home Verzeichnis des Users kopieren
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/{{ ansible_user }}/.kube/config
+        remote_src: yes
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0600
+    - name: Flannel installieren
+      command: kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
+    - name: Überprüfung Flannel Pod
+      shell: kubectl get pods --all-namespaces
+      register: kubectl_output
+
+    - name: Output anzeigen
+      debug:
+        var: kubectl_output.stdout_lines
