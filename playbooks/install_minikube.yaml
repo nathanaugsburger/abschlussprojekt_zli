@@ -1,11 +1,11 @@
 ---
 - name: Minikube Setup
-  hosts: host1
+  hosts: kubemaster
   become: true
   tasks:
-  - name: Minikube installieren
+  - name: Minikube Abhängigkeiten installieren
     apt:
-      name: 
+      name:
         - curl
         - apt-transport-https
         - virtualbox
