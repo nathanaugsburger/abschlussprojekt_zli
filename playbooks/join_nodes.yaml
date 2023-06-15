@@ -2,6 +2,7 @@
 - name: Kubernetes Nodes hinzufügen
   hosts: kubeworker
   become: true
+  become_method: sudo
   tasks:
     - name: Worker Node zum Cluster hinzufügen
       command: sudo kubeadm join 192.168.26.164:6443 --token 8d7ivk.ogf0up9ldafn2nai --discovery-token-ca-cert-hash sha256:4e37674ca90f0be8db14d8b2367eb5eccc8e576a245bbbd58dfdf3c73237190d
