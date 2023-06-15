@@ -5,12 +5,17 @@
   become_method: sudo
   tasks:
 
-    - name: Kubernetes auf dem Master konfigurieren
-      command: "{{ item }}"
-      loop:
-        - mkdir -p $HOME/.kube
-        - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-        - sudo chown {{ ansible_user_id  }}:{{ ansible_user_id  }} $HOME/.kube/config
+    - name: Verzeichnis .kube erstellen
+      file:
+        path: $HOME/.kube
+        state: directory
+
+    - name: Kubeconfig kopieren
+      command: sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+    - name: Rechte anpassen
+      command: sudo chown {{ ansible_user }}:{{ ansible_user }} $HOME/.kube/config
+
 
     - name: Kubeconfig verifizieren
       command: kubectl get pods -n kube-system
