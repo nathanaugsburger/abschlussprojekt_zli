@@ -10,25 +10,10 @@
         path: $HOME/.kube
         state: directory
 
-    - name: Kubeconfig kopieren
-      command: sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-
-    - name: Rechte anpassen
-      command: sudo chown {{ ansible_user }}:{{ ansible_user }} $HOME/.kube/config
-
-
-    - name: Kubeconfig verifizieren
-      command: kubectl get pods -n kube-system
-      register: kubectl_output
-
-    - name: Ausgabe anzeigen
-      debug:
-        var: kubectl_output.stdout_lines
-
     - name: Kubeconfig zum Home Verzeichnis des Users kopieren
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /home/{{ ansible_user }}/.kube/config
+        dest: $HOME/.kube/config
         remote_src: yes
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
