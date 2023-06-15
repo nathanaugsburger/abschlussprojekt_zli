@@ -2,6 +2,7 @@
 - name: Kubernetes Cluster konfigurieren
   hosts: kubemaster
   become: true
+  become_method: sudo
   tasks:
 
     - name: Kubernetes auf dem Master konfigurieren
@@ -9,10 +10,10 @@
       loop:
         - mkdir -p $HOME/.kube
         - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-        - sudo chown $(id -u):$(id -g) $HOME/.kube/config
+        - sudo chown {{ ansible_user_id  }}:{{ ansible_user_id  }} $HOME/.kube/config
 
     - name: Kubeconfig verifizieren
-      command: kubectl get po -n kube-system
+      command: kubectl get pods -n kube-system
       register: kubectl_output
 
     - name: Ausgabe anzeigen
