@@ -2,6 +2,7 @@
   hosts: kubemaster
   gather_facts: false
   become: true
+  become_method: sudo
   vars:
     IPADDR: "192.168.26.164"
     NODENAME: "ansible"
