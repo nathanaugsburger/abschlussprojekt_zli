@@ -2,6 +2,7 @@
 - name: Kubernetes Setup
   hosts: kubemaster, kubeworker
   become: true
+  become_method: sudo
   tasks:
    - name: Swap deaktivieren
      command: swapoff -a
