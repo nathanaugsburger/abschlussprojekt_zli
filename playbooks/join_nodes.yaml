@@ -4,6 +4,21 @@
   become: true
   tasks:
     - name: Worker Node zum Cluster hinzufügen
-      command: "{{ item }}"
-      loop:
-        - kubeadm join 192.168.26.164:6443 --token 8d7ivk.ogf0up9ldafn2nai --discovery-token-ca-cert-hash sha256:4e37674ca90f0be8db14d8b2367eb5eccc8e576a245bbbd58dfdf3c73237190d
+      command: sudo kubeadm join 192.168.26.164:6443 --token 8d7ivk.ogf0up9ldafn2nai --discovery-token-ca-cert-hash sha256:4e37674ca90f0be8db14d8b2367eb5eccc8e576a245bbbd58dfdf3c73237190d
+      register: kubeadm_output
+
+    - name: Ausgabe anzeigen
+      debug:
+        var: kubeadm_output.stdout_lines
+
+    - name: Pause
+      pause:
+        seconds: 15
+
+    - name: Nodes anzeigen
+      command: kubectl get nodes
+      register: kubectl_output
+
+    - name: Augabe anzeigen
+      debug:
+        var: kubectl_output.stdout_lines
