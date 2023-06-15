@@ -1,0 +1,30 @@
+- name: Kubernetes Cluster initialisieren
+  hosts: kubemaster
+  gather_facts: false
+  become: true
+  vars:
+    IPADDR: "192.168.26.164"
+    NODENAME: "ansible"
+    POD_CIDR: "192.168.0.0/16"
+    OUTPUT_FILE: "~/output.txt"
+  tasks:
+    - name: Ausgabe-Verzeichnis erstellen
+      file:
+        path: "{{ OUTPUT_FILE | dirname }}"
+        state: directory
+      become: true
+
+    - name: Kubernetes Cluster initialisieren
+      command: "sudo kubeadm init --apiserver-advertise-address={{ IPADDR }} --apiserver-cert-extra-sans={{ IPADDR }} --pod-network-cidr={{ POD_CIDR }} --node-name {{ NODENAME }} --ignore-preflight-errors Swap"
+      register: init_output
+
+    - name: Ausgabe anzeigen
+      debug:
+        var: init_output.stdout_lines
+
+    - name: Ausgabe in Datei speichern
+      copy:
+        content: "{{ init_output.stdout }}"
+        dest: "{{ OUTPUT_FILE }}"
+        mode: "0644"
+      when: OUTPUT_FILE is defined
