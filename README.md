@@ -6,3 +6,10 @@ In diesem Repository werde ich alle meine Dateien des Abschlussprojektes hochlad
 Folgende Dateien sind in diesem Repo enthalten:
 - Ansible Playbooks
 - Kubernetes YAML-Files
+## Playbooks
+### Docker Setup
+Das Playbook [install_docker.yaml](https://github.com/nathanaugsburger/abschlussprojekt_zli/blob/main/playbooks/install_docker.yaml)
+enthält die Installation der Abhängigkeiten, von Docker selbst und das Hinzufügen des gewünschten Benutzers zur Docker Gruppe.
+### Kubernetes Setup
+Das Playbook [install_kubernetes.yaml](https://github.com/nathanaugsburger/abschlussprojekt_zli/blob/main/playbooks/install_kubernetes.yaml)
+enthält die Installation der Abhängigkeiten, das Deaktivieren des Swap, so wie die Installation der Kubernetes Pakete kubeadm, kubectl und kubelet.
