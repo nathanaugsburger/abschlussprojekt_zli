@@ -5,7 +5,7 @@ In meinem Projekt geht es darum, mit Ansible alles rund um Kubernetes zu automat
 In diesem Repository werde ich alle meine Dateien des Abschlussprojektes hochladen.
 Folgende Dateien sind in diesem Repo enthalten:
 - Ansible Playbooks
-- Kubernetes YAML-Files
+- YAML-Files für Deployment
 ## Playbooks
 ### Docker Setup
 Das Playbook [install_docker.yaml](https://github.com/nathanaugsburger/abschlussprojekt_zli/blob/main/playbooks/install_docker.yaml)
