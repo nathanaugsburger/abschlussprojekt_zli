@@ -2,6 +2,7 @@
 - name: Docker Setup
   hosts: kubemaster, kubeworker
   become: true
+  become_method: sudo
   tasks:
     - name: Docker Abhängigkeiten installieren
       apt:
