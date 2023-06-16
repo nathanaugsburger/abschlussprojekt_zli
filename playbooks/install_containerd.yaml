@@ -14,43 +14,43 @@
          - software-properties-common
        state: present
 
-    - name: Docker GPG Key hinzufügen
-      shell: |
-        sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/docker.gpg
+   - name: Docker GPG Key hinzufügen
+     shell: |
+       sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/docker.gpg
 
 
-    - name: Docker Repo hinzufügen
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable
-        state: present
+   - name: Docker Repo hinzufügen
+     apt_repository:
+       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+       state: present
 
-    - name: sudo apt update
-      apt:
-        update_cache: yes
+   - name: sudo apt update
+     apt:
+       update_cache: yes
 
-    - name: Containerd installieren
-      apt:
-        name: containerd.io
-        state: present
+   - name: Containerd installieren
+     apt:
+       name: containerd.io
+       state: present
 
-    - name: Containerd Grundkonfiguration
-      shell: |
-        containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
+   - name: Containerd Grundkonfiguration
+     shell: |
+       containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
 
-    - name: SystemdCgroup aktivieren
-      lineinfile:
-        path: /etc/containerd/config.toml
-        regexp: '^SystemdCgroup = false$'
-        line: 'SystemdCgroup = true'
+   - name: SystemdCgroup aktivieren
+     lineinfile:
+       path: /etc/containerd/config.toml
+       regexp: '^SystemdCgroup = false$'
+       line: 'SystemdCgroup = true'
 
-    - name: Containerd neustarten
-      systemd:
-        name: containerd
-        state: restarted
+   - name: Containerd neustarten
+     systemd:
+       name: containerd
+       state: restarted
 
-    - name: Containerd aktivieren
-      systemd:
-        name: containerd
-        enabled: yes
+   - name: Containerd aktivieren
+     systemd:
+       name: containerd
+       enabled: yes
 
 
