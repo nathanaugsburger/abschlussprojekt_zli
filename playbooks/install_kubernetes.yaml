@@ -4,30 +4,9 @@
   become: true
   become_method: sudo
   tasks:
-   - name: Swap deaktivieren
-     command: swapoff -a
 
-   - name: Swap Eintrag aus /etc/fstab entfernen
-     lineinfile:
-       dest: /etc/fstab
-       regexp: swap
-       state: absent
-
-   - name: Abhängigkeiten Kubernetes installieren
-     apt:
-       name:
-         - apt-transport-https
-         - ca-certificates
-         - curl
-         - gnupg-agent
-         - vim
-         - software-properties-common
-       state: present
-
-   - name: Kubernetes GPG Key hinzufügen
-     apt_key:
-       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-       state: present
+   - name: Kubernetes GPG Key importieren
+     command: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/kubernetes-xenial.gpg
 
    - name: Kubernetes Repository hinzufügen
      apt_repository:
@@ -35,15 +14,14 @@
        state: present
        filename: kubernetes
 
+   - name: sudo apt update
+     apt:
+       update_cache: yes
+
    - name: Kubernetes Pakete installieren
      apt:
        name:
          - kubeadm
          - kubectl
          - kubelet
-       state: present
-
-   - name: Kubelet dauerhaft aktivieren
-     service:
-       name: kubelet
-       enabled: yes
+       state: hold
