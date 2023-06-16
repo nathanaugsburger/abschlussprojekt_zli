@@ -42,6 +42,3 @@
     - name: Ausgabe anzeigen
       debug:
         var: kubectl2_output.stdout_lines
-
-    - name: Netzwerk Plugin Calico installieren
-      command: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
