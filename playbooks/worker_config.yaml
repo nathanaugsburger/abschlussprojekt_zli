@@ -23,11 +23,7 @@
         state: absent
 
     - name: Kernel Module laden
-      blockinfile:
-        path: /etc/modules-load.d/containerd.conf
-        block: |
-          overlay
-          br_netfilter
+      command: "echo -e 'overlay\nbr_netfilter' | sudo tee /etc/modules-load.d/containerd.conf"
 
     - name: overlay prüfen
       command: modprobe overlay
@@ -36,12 +32,12 @@
       command: modprobe br_netfilter
 
     - name: Kubernetes Kernel Parameter setzen
-      blockinfile:
-        path: /etc/sysctl.d/kubernetes.conf
-        block: |
-          net.bridge.bridge-nf-call-ip6tables = 1
-          net.bridge.bridge-nf-call-iptables = 1
-          net.ipv4.ip_forward = 1
+      command: "sudo tee /etc/sysctl.d/kubernetes.conf <<EOF
+    net.bridge.bridge-nf-call-ip6tables = 1
+    net.bridge.bridge-nf-call-iptables = 1
+    net.ipv4.ip_forward = 1
+    EOF"
+
 
     - name: Änderungen neuladen
       command: sysctl --system
