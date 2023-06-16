@@ -5,6 +5,14 @@
   become_method: sudo
   tasks:
 
+    - name: Cluster initialisieren
+      command: kubeadm init --control-plane-endpoint=kubemaster.nathan.local
+      register: init_output
+
+    - name: Ausgabe anzeigen
+      debug:
+        var: init_output.stdout_lines
+
     - name: Verzeichnis .kube erstellen
       file:
         path: $HOME/.kube
@@ -18,6 +26,22 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: 0600
+
+    - name: Cluster Info anzeigen
+      command: kubectl cluster-info
+      register: kubectl_output
+
+    - name: Ausgabe anzeigen
+      debug:
+        var: kubectl_output.stdout_lines
+
+    - name: Nodes anzeigen
+      command: kubectl get nodes
+      register: kubectl2_output
+
+    - name: Ausgabe anzeigen
+      debug:
+        var: kubectl2_output.stdout_lines
 
     - name: Netzwerk Plugin Calico installieren
       command: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
