@@ -1,0 +1,44 @@
+---
+- name: Kubernetes Cluster konfigurieren
+  hosts: kubemaster
+  become: true
+  become_method: sudo
+  tasks:
+
+    - name: Cluster initialisieren
+      command: kubeadm init --control-plane-endpoint=kubemaster.nathan.local
+      register: init_output
+
+    - name: Ausgabe anzeigen
+      debug:
+        var: init_output.stdout_lines
+
+    - name: Verzeichnis .kube erstellen
+      file:
+        path: $HOME/.kube
+        state: directory
+
+    - name: Kubeconfig zum Home Verzeichnis des Users kopieren
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: $HOME/.kube/config
+        remote_src: yes
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0600
+
+    - name: Cluster Info anzeigen
+      command: kubectl cluster-info
+      register: kubectl_output
+
+    - name: Ausgabe anzeigen
+      debug:
+        var: kubectl_output.stdout_lines
+
+    - name: Nodes anzeigen
+      command: kubectl get nodes
+      register: kubectl2_output
+
+    - name: Ausgabe anzeigen
+      debug:
+        var: kubectl2_output.stdout_lines
