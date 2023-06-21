@@ -6,7 +6,7 @@
   tasks:
 
     - name: Cluster initialisieren
-      command: kubeadm init --control-plane-endpoint=kubemaster.nathan.local
+      command: sudo kubeadm init --control-plane-endpoint=kubemaster.ansible.local
       register: init_output
 
     - name: Ausgabe anzeigen
