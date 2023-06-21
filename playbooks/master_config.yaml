@@ -10,7 +10,7 @@
     - name: /etc/hosts Eintrag
       lineinfile:
         path: /etc/hosts
-        line: 192.168.26.164  kubemaster.ansible.local kubemaster
+        line: 192.168.26.167  kubemaster.ansible.local kubemaster
         state: present
 
     - name: Swap deaktivieren
@@ -22,11 +22,10 @@
         regexp: swap
         state: absent
 
-    - name: Kernel Module laden
-      command: "sudo tee /etc/modules-load.d/containerd.conf <<EOF
-    overlay
-    br_netfilter
-    EOF"
+    - name: Kopiere Kernel Module
+      copy:
+        src: /home/nathan/abschlussprojekt_zli/playbooks/help_files/containerd.conf
+        dest: /etc/modules-load.d/containerd.conf
 
     - name: overlay prüfen
       command: modprobe overlay
@@ -35,11 +34,9 @@
       command: modprobe br_netfilter
 
     - name: Kubernetes Kernel Parameter setzen
-      command: "sudo tee /etc/sysctl.d/kubernetes.conf <<EOF
-    net.bridge.bridge-nf-call-ip6tables = 1
-    net.bridge.bridge-nf-call-iptables = 1
-    net.ipv4.ip_forward = 1
-    EOF"
+      copy:
+        src: /home/nathan/abschlussprojekt_zli/playbooks/help_files/kubernetes.conf
+        dest: /etc/sysctl.d/kubernetes.conf
 
     - name: Änderungen neuladen
       command: sysctl --system
