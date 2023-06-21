@@ -23,7 +23,10 @@
         state: absent
 
     - name: Kernel Module laden
-      command: "echo -e 'overlay\nbr_netfilter' | sudo tee /etc/modules-load.d/containerd.conf"
+      command: "sudo tee /etc/modules-load.d/containerd.conf <<EOF
+    overlay
+    br_netfilter
+    EOF"
 
     - name: overlay prüfen
       command: modprobe overlay
