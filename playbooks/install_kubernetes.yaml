@@ -6,7 +6,8 @@
   tasks:
 
    - name: Kubernetes GPG Key importieren
-     command: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/kubernetes-xenial.gpg
+     shell: |
+       curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kubernetes-xenial.gpg
 
    - name: Kubernetes Repository hinzufügen
      apt_repository:
@@ -24,4 +25,9 @@
          - kubeadm
          - kubectl
          - kubelet
-       state: hold
+       state: present
+
+   - name: Version fixieren
+     command: sudo apt-mark hold kubelet kubeadm kubectl
+
+
